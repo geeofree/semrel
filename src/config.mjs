@@ -12,6 +12,11 @@ import { path, fs, YAML, argv } from 'zx';
   **/
 
 /**
+  * @callback onReleaseCallback
+  * @param {object} data
+  **/
+
+/**
   * @typedef SemRelConfig
   * @property {string} initial-version Sets the initial version if no other versions have been released.
   * @property {boolean?} dry-run Runs the release script without pushing tags or publishing releases.
@@ -20,6 +25,7 @@ import { path, fs, YAML, argv } from 'zx';
   * @property {string?} jira-url The URL for the JIRA board
   * @property {boolean?} validate-jira-links If true, checks if the scopes of the commits are valid as JIRA ticket identifiers.
   * @property {string?} suffix Adds a suffix for the version name
+  * @property {onReleaseCallback?} onRelease Adds a suffix for the version name
   * @property {ReleaseRules} release-rules
   **/
 
@@ -46,10 +52,11 @@ const getConfig = async () => {
         title: 'Bug Fixes',
         'starts-with': ['fix', 'perf', 'hotfix'],
       }
-    }
+    },
+    onRelease: null,
   }
 
-  let configFilePaths = ['.release.yaml', '.release.yml'].map(fileName => {
+  let configFilePaths = ['.semrel.js', '.semrel.yaml', '.semrel.yml'].map(fileName => {
     const filePath = path.resolve(__dirname, '..', fileName);
     return fs.pathExists(filePath).then(exists => exists ? filePath : null);
   });
@@ -59,32 +66,46 @@ const getConfig = async () => {
   const configFilePath = configFilePaths.find(filePath => filePath);
 
   if (configFilePath) {
-    const yamlFile = await fs.readFile(configFilePath, 'utf-8');
-    const yamlConfig = YAML.parse(yamlFile);
+    const fileExtension = await path.extname(configFilePath);
+
+    let configFile;
+
+    switch (fileExtension) {
+      case ".yaml":
+      case ".yml":
+        configFile = await fs.readFile(configFilePath, 'utf-8');
+        configFile = YAML.parse(configFile);
+        break;
+
+      case ".js":
+        configFile = require(configFilePath);
+        break;
+    }
+
     config = {
       ...config,
-      ...yamlConfig,
+      ...configFile,
       'release-rules': {
         ...config['release-rules'],
       }
     };
 
-    if (yamlConfig['release-rules']) {
+    if (configFile['release-rules']) {
       config = {
         ...config,
         'release-rules': {
           ...config['release-rules'],
           major: {
             ...config['release-rules'].major,
-            ...yamlConfig['release-rules'].major,
+            ...configFile['release-rules'].major,
           },
           minor: {
             ...config['release-rules'].minor,
-            ...yamlConfig['release-rules'].minor,
+            ...configFile['release-rules'].minor,
           },
           patch: {
             ...config['release-rules'].patch,
-            ...yamlConfig['release-rules'].patch,
+            ...configFile['release-rules'].patch,
           },
         }
       }
