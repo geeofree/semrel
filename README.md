@@ -5,7 +5,7 @@ A simple semantic release CLI Tool.
 ## Usage
 
 ```sh
-npx @geeofree/semrel@latest [<options>]
+npx @geeofree/semrel [<options>]
 ```
 
 ## CLI Options
