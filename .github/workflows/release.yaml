@@ -20,10 +20,15 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: mv $NPM_CONFIG_USERCONFIG ${{ github.workspace }}/.npmrc
+
+      - run: ls -al
 
       - run: npm ci
 
       - run: npm run build
 
       - name: Release
-        run: npx zx src/release.mjs -i 0.0.0-alpha --pre-release
+        run: npx . -i 0.0.0-alpha --pre-release

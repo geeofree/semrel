@@ -210,34 +210,34 @@ import getConfig from './config.mjs';
   }
 
   if (config['dry-run']) {
-    return console.log("[INFO] Dry-run is on. Won't be releasing changes.");
-  }
+    console.log("[INFO] Dry-run is on. Won't be releasing changes.");
+  } else {
+    await $`git config user.name ${GIT_COMMITTER.name}`;
+    await $`git config user.email ${GIT_COMMITTER.email}`;
 
-  await $`git config user.name ${GIT_COMMITTER.name}`;
-  await $`git config user.email ${GIT_COMMITTER.email}`;
+    await $`git tag -a ${nextTag} -m ${releaseMessage}`;
+    await $`git push origin ${nextTag}`;
 
-  await $`git tag -a ${nextTag} -m ${releaseMessage}`;
-  await $`git push origin ${nextTag}`;
+    const releaseData = JSON.stringify({
+      name: nextTag,
+      tag_name: nextTag,
+      body: releaseNotes,
+      owner: GH_REPO_OWNER,
+      repo: GH_REPO_NAME,
+      prerelease: config['pre-release'],
+      draft: config['draft'],
+    });
 
-  const releaseData = JSON.stringify({
-    name: nextTag,
-    tag_name: nextTag,
-    body: releaseNotes,
-    owner: GH_REPO_OWNER,
-    repo: GH_REPO_NAME,
-    prerelease: config['pre-release'],
-    draft: config['draft'],
-  });
-
-  await $`
-    curl \
+    await $`
+      curl \
       -X POST \
       -H "Accept: application/vnd.github+json" \
       -H "Authorization: Bearer ${TOKEN}"\
       -H "X-GitHub-Api-Version: 2022-11-28" \
       https://api.github.com/repos/${GH_REPO_OWNER}/${GH_REPO_NAME}/releases \
       -d ${releaseData}
-  `
+    `
+  }
 
   if (config.onRelease) {
     await config.onRelease(outputData, $);
