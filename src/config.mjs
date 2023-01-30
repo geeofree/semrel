@@ -57,7 +57,7 @@ const getConfig = async () => {
   }
 
   let configFilePaths = ['.semrel.js', '.semrel.yaml', '.semrel.yml'].map(fileName => {
-    const filePath = path.resolve(require.main.filename, '..', '..', fileName);
+    const filePath = path.resolve(process.cwd(), fileName);
     return fs.pathExists(filePath).then(exists => exists ? filePath : null);
   });
 
