@@ -1,4 +1,4 @@
-# Semantic Release (semrel)
+# semrel: Semantic Release
 
 A simple semantic release CLI Tool.
 
@@ -24,13 +24,20 @@ npx @geeofree/semrel@latest [<options>]
 
 This script will read from the ff. files in order: `.semrel.js`, `.semrel.yaml`, `.semrel.yml`.
 
-The files will be read relative to the working directory of when the command was executed.
+The files will be read relative to the working directory of where the command was executed.
 
 > TODO: Document how to write config files.
 
 ## Environment Variables
 
-> TODO: Document environment variables
+| Variable                   | Description                                                                   | Defaults                 |
+|----------------------------|-------------------------------------------------------------------------------|--------------------------|
+| `GH_TOKEN`, `GITHUB_TOKEN` | **REQUIRED:** Github token with write permissions on the repository.          | `''`                     |
+| `GH_REPOSITORY`            | **REQUIRED:** Github repository in the form of: `'<repo_owner>/<repo_name>'`. | `''`                     |
+| `GIT_COMMITTER_NAME`       | The name of the committer when publishing releases.                           | `SemRel Bot`             |
+| `GIT_COMMITTER_EMAIL`      | The email of the committer when publishing releases.                          | `semrel-bot@hotmail.com` |
+| `SEMREL_DEBUG`             | Provides debugging output.                                                    | `0`                      |
+| `VERBOSE`                  | Prints each command execution in the script.                                  | `0`                      |
 
 ## Attribution
 
