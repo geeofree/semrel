@@ -1,8 +1,10 @@
 import { $ } from 'zx';
 import getConfig from './config.mjs';
 
+
 (async () => {
-  const { SEMREL_DEBUG: DEBUG, GH_REPOSITORY, GH_TOKEN, GITHUB_TOKEN, GIT_COMMITTER_NAME, GIT_COMMITTER_EMAIL } = process.env;
+  const { SEMREL_DEBUG: DEBUG, GH_REPOSITORY, GH_TOKEN, GITHUB_TOKEN, GIT_COMMITTER_NAME, GIT_COMMITTER_EMAIL, VERBOSE } = process.env;
+  $.verbose = VERBOSE;
   const config = await getConfig();
 
   const TOKEN = GH_TOKEN || GITHUB_TOKEN
@@ -191,17 +193,20 @@ import getConfig from './config.mjs';
   const nextTag = `v${nextVersion}`;
   const releaseMessage = `chore(release): ${nextTag}\n\n${releaseNotes}`;
 
+  const outputData = {
+    config: config,
+    tags,
+    latestTag,
+    latestCommits,
+    semanticChanges,
+    releaseNotes,
+    nextReleaseType,
+    nextVersion,
+    nextTag,
+  };
+
   if (DEBUG) {
-    console.log({
-      config: config,
-      tags,
-      latestTag,
-      latestCommits,
-      semanticChanges,
-      releaseNotes,
-      nextReleaseType,
-      nextVersion,
-    });
+    console.log(outputData);
   }
 
   if (config['dry-run']) {
@@ -233,4 +238,9 @@ import getConfig from './config.mjs';
       https://api.github.com/repos/${GH_REPO_OWNER}/${GH_REPO_NAME}/releases \
       -d ${releaseData}
   `
+
+  if (config.onRelease) {
+    await config.onRelease(outputData, $);
+    $.verbose = VERBOSE;
+  }
 })()
