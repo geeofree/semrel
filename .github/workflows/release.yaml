@@ -24,11 +24,9 @@ jobs:
 
       - run: mv $NPM_CONFIG_USERCONFIG ${{ github.workspace }}/.npmrc
 
-      - run: ls -al
-
       - run: npm ci
 
       - run: npm run build
 
       - name: Release
-        run: node ./bin/release.js -i 0.0.1 -s alpha --pre-release
+        run: node ./bin/release.js -i 1.0.0
