@@ -1,0 +1,27 @@
+name: Publish & Release
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-22.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPOSITORY: ${{ github.repository }}
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Release
+        run: npx zx src/release.mjs --dry-run
