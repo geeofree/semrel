@@ -26,4 +26,4 @@ jobs:
       - run: npm run build
 
       - name: Release
-        run: npx zx src/release.mjs -i 0.0.0-draft --draft
+        run: npx zx src/release.mjs -i 0.0.0-alpha --pre-release
