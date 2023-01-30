@@ -23,5 +23,7 @@ jobs:
 
       - run: npm ci
 
+      - run: npm run build
+
       - name: Release
-        run: npx zx src/release.mjs --dry-run
+        run: npx zx src/release.mjs -i 0.0.0-draft --draft
