@@ -31,4 +31,4 @@ jobs:
       - run: npm run build
 
       - name: Release
-        run: npx . -i 0.0.0-alpha --pre-release
+        run: npx . -i 0.0.0 -s alpha --pre-release
