@@ -22,7 +22,7 @@ npx @geeofree/semrel [<options>]
 
 ## Config Files
 
-This script will read from the ff. files in order: `.semrel.js`, `.semrel.yaml`, `.semrel.yml`.
+This script will read from one of the ff. files in order: `.semrel.js`, `.semrel.yaml`, `.semrel.yml`.
 
 The files will be read relative to the working directory of where the command was executed.
 
