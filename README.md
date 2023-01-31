@@ -1,4 +1,4 @@
-# semrel: Semantic Release
+# semrel: Semantic Release 📦
 
 A simple semantic release CLI Tool.
 
